@@ -7,6 +7,9 @@ from youtubechat import YoutubeLiveChat, get_live_chat_id_for_broadcast_id, get_
 from youtubechat import get_broadcast_elapsed_time
 argv = sys.argv
 
+
+laugh_global = 0
+
 if len(argv) is not 2:
     print("Use like bot.py <broadcast_id>")
     exit(0)
@@ -38,20 +41,32 @@ def log_chat(msg_obj):
 
 # Command
 def uptime(chatid):
-    response = '방송이 시작된 지, '+get_broadcast_elapsed_time(broadcast_id,"oauth_creds") + '이 지났습니다.';
+    response = '방송이 시작된 지, '+get_broadcast_elapsed_time(broadcast_id,"oauth_creds") + '이 지났습니다.'
+    chat_obj.send_message(response, chatid)
+
+def laugh(chatid):
+    response = "으악ㅋㅋㅋ똑똑이도 웃겨ㅋㅋㅋㅋㅋㅋㅋㅋㅋ"
     chat_obj.send_message(response, chatid)
 
 
 #Parsing Commands
 def respond(msgs, chatid):
+    global laugh_global
+
     for msg in msgs:
         print(msg)
         log_chat(msg)
         if msg.message_text.find('!업타임') != -1:
             uptime(chatid)
+
         elif msg.message_text.find('!앵무새') != -1:
             chat_obj.send_message("DDOKDDOK "+msg.message_text[4:], chatid)
             msg.delete()
+
+        elif msg.message_text.find('ㅋㅋㅋ') != -1:
+            laugh_global = laugh_global+1
+            if laugh_global%5==0:
+                laugh(chatid)
         else:
             True
             #Nothing
